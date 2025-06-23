@@ -153,13 +153,13 @@ El servidor muestra información detallada:
 
 ### Para probar el broadcast entre múltiples clientes:
 
-1. **Ejecuta el servidor:**
+1. **Ejecutar el servidor:**
 
 ```bash
 node server.js
 ```
 
-2. **Abre múltiples terminales y ejecuta clientes:**
+2. **Abrir múltiples terminales y ejecutar clientes:**
 
 ```bash
 # Terminal 1
@@ -172,7 +172,7 @@ node client.js
 node client.js
 ```
 
-3. **Escribe en cualquier cliente:**
+3. **Escribir en cualquier cliente:**
 
 ```
 💬 > Hola desde cliente 1!
@@ -209,7 +209,7 @@ node client.js
 
 ### No recibo broadcasts:
 
-* Asegúrate de tener múltiples clientes conectados
+* Asegurarnos de tener múltiples clientes conectados
 * El cliente que envía el mensaje NO recibe su propio broadcast
 * Solo los otros clientes reciben el mensaje
 
@@ -251,4 +251,3 @@ Este es un mensaje simple
 * **Testing** de APIs WebSocket
 
 La aplicación maneja tanto mensajes JSON estructurados como texto plano automáticamente
-# websocket
