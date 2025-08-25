@@ -1,0 +1,192 @@
+<!-- <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSocket Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    header {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .log {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      background-color: #fafafa;
+      margin-bottom: 15px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .controls input {
+      padding: 6px;
+      font-size: 0.9rem;
+      flex: 1;
+      min-width: 200px;
+    }
+    .controls button {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #0078d7;
+      color: white;
+      transition: background-color 0.2s;
+    }
+    .controls button:hover {
+      background-color: #005ea3;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+      }
+      .row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📡 WebSocket Cliente</h1>
+  </header>
+
+  <div class="log" id="log"></div>
+
+  <div class="controls">
+    <input type="text" id="msgInput" placeholder="Escribe un mensaje..." />
+    <button onclick="sendSelf()">Solo a mí</button>
+    <button onclick="sendBroadcast()">Broadcast</button>
+  </div>
+
+  <div class="row">
+    <input type="text" id="targetId" placeholder="ID destino..." />
+    <button onclick="sendPrivate()">Enviar privado</button>
+  </div>
+
+  <script>
+    const logDiv = document.getElementById('log');
+    const ws = new WebSocket('ws://localhost:8080');
+    let myId = null;
+
+    ws.onopen = () => log('✅ Conectado al servidor');
+
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'system') {
+          myId = msg.clientId;
+          log(`🆔 Tu ID es: ${myId}`);
+        } else {
+          log(`📩 [${msg.type}] ${msg.from || 'server'}: ${msg.message}`);
+        }
+      } catch {
+        log(`📩 ${event.data}`);
+      }
+    };
+
+    ws.onclose = () => log('❌ Conexión cerrada');
+
+    function log(message) {
+      const p = document.createElement('div');
+      p.textContent = message;
+      logDiv.appendChild(p);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function sendSelf() {
+      const message = document.getElementById('msgInput').value;
+      ws.send(JSON.stringify({ type: 'self', message }));
+    }
+
+    function sendBroadcast() {
+      const message = document.getElementById('msgInput').value;
+      ws.send(JSON.stringify({ type: 'broadcast', message }));
+    }
+
+    function sendPrivate() {
+      const message = document.getElementById('msgInput').value;
+      const to = document.getElementById('targetId').value;
+      ws.send(JSON.stringify({ type: 'private', to, message }));
+    }
+  </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chat WebSocket</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+    input, button { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Chat WebSocket</h1>
+  
+  <input id="username" placeholder="Tu nombre">
+  <button onclick="registerUser()">Registrar</button>
+  
+  <div id="chat"></div>
+  
+  <input id="recipient" placeholder="Enviar a (usuario)">
+  <input id="message" placeholder="Mensaje">
+  <button onclick="sendPrivate()">Enviar Privado</button>
+  <button onclick="sendBroadcast()">Enviar a Todos</button>
+  
+  <script>
+    const ws = new WebSocket('ws://localhost:8080');
+    
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const chat = document.getElementById('chat');
+      chat.innerHTML += `<p><b>${data.from}:</b> ${data.message}</p>`;
+      chat.scrollTop = chat.scrollHeight;
+    };
+
+    function registerUser() {
+      const username = document.getElementById('username').value;
+      ws.send(JSON.stringify({ type: 'register', username }));
+    }
+
+    function sendPrivate() {
+      const to = document.getElementById('recipient').value;
+      const message = document.getElementById('message').value;
+      ws.send(JSON.stringify({ type: 'private', to, message }));
+    }
+
+    function sendBroadcast() {
+      const message = document.getElementById('message').value;
+      ws.send(JSON.stringify({ type: 'broadcast', message }));
+    }
+  </script>
+</body>
+</html>
+
